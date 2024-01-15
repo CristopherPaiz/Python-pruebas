@@ -17,7 +17,7 @@ def ejecutar_codigo():
         session = HTMLSession()
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
-        r = session.get('https://guatemaladigital.com/')
+        r = session.get('https://guatemaladigital.com/', timeout=60)
         r.html.render()
 
         # Crear un objeto BeautifulSoup para analizar el HTML
