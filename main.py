@@ -17,7 +17,7 @@ async def send_Error(text, error):
     await bot.send_message(chat_id=chat_id, text="Hubo un error al obtener los productos: " + str(text) + ". " + str(error))
 
 def download_and_install_geckodriver():
-    geckodriver_url = "https://github.com/mozilla/geckodriver/releases/latest/download/geckodriver-linux64-v0.30.0.tar.gz"
+    geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
     geckodriver_zip = "geckodriver.zip"
     
     # Descargar geckodriver
