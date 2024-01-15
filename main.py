@@ -94,7 +94,8 @@ def ejecutar_codigo():
         # Verificar si no se encontraron productos y enviar un mensaje de error
         if not productos_procesados:
             asyncio.run(send_Error("No se encontraron productos con descuento", None))
-
+            driver.quit()
+            
         # Cerrar el navegador
         driver.quit()
 
