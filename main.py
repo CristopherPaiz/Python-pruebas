@@ -1,8 +1,12 @@
 from bs4 import BeautifulSoup
-from requests_html import HTMLSession
 import asyncio
 import urllib.parse
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from telegram import Bot
+from webdriver_manager.chrome import ChromeDriverManager
 
 TOKEN = '5558634309:AAGC9BY28ru907q3hmhWwdS83F31cIjHuiQ'
 chat_id = '815189312'
@@ -13,15 +17,16 @@ async def send_Error(text, error):
 
 def ejecutar_codigo():
     try:
-        # Crear una sesión HTML
-        session = HTMLSession()
+        # Configurar Selenium con Chrome
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # Para ejecución sin interfaz gráfica
+        # service = ChromeService(executable_path='path/to/chromedriver')  # Reemplaza con la ubicación de tu chromedriver
+        # driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
-        r = session.get('https://guatemaladigital.com/', timeout=60)
-        r.html.render()
-
-        # Crear un objeto BeautifulSoup para analizar el HTML
-        soup = BeautifulSoup(r.html.raw_html, 'html.parser')
+        driver.get('https://guatemaladigital.com/')
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
 
         # Buscar todos los bloques con la estructura especificada
         bloques = soup.find_all('div', class_='bloque--oferta marco--oferta--item mx-0')
@@ -29,7 +34,7 @@ def ejecutar_codigo():
         # Crear un conjunto para almacenar productos únicos
         productos_procesados = set()
 
-        # Definimos la funcion que comunica a telegram
+        # Definimos la función que comunica a Telegram
         async def send_message(imagen, descripcion, precio_normal, precio_oferta, descuento, enlace):
             urlUnida = "https://guatemaladigital.com" + enlace
             message = f'<b><u>PRODUCTO:</u></b>\n' \
@@ -89,6 +94,9 @@ def ejecutar_codigo():
         # Verificar si no se encontraron productos y enviar un mensaje de error
         if not productos_procesados:
             asyncio.run(send_Error("No se encontraron productos con descuento", None))
+
+        # Cerrar el navegador
+        driver.quit()
 
     except ValueError:
         asyncio.run(send_Error("2", ValueError))
