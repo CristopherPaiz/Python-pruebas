@@ -1,6 +1,6 @@
 import os
 import tarfile
-import urllib.request
+import requests
 from bs4 import BeautifulSoup
 import asyncio
 from selenium import webdriver
@@ -15,12 +15,37 @@ async def send_Error(text, error):
     bot = Bot(token=TOKEN)
     await bot.send_message(chat_id=chat_id, text="Hubo un error al obtener los productos: " + str(text) + ". " + str(error))
 
+def download_and_install_firefox():
+    # Obtener la última versión de Firefox
+    firefox_latest_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/firefox-99.0b8.tar.bz2"
+    response = requests.get(firefox_latest_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    firefox_version = soup.find('a', href=lambda x: x and x.startswith('firefox-')).get('href')
+
+    # Construir la URL completa del archivo de instalación
+    firefox_download_url = f"{firefox_latest_url}{firefox_version}"
+    firefox_tar = f"{firefox_version}"
+    
+    # Descargar Firefox
+    response = requests.get(firefox_download_url)
+    with open(firefox_tar, 'wb') as f:
+        f.write(response.content)
+
+    # Descomprimir el archivo tar
+    with tarfile.open(firefox_tar, 'r:gz') as tar_ref:
+        tar_ref.extractall('./firefox')
+
+    # Eliminar el archivo tar después de descomprimir
+    os.remove(firefox_tar)
+
 def download_and_install_geckodriver():
     geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
     geckodriver_tar = "geckodriver.tar.gz"
     
     # Descargar geckodriver
-    urllib.request.urlretrieve(geckodriver_url, geckodriver_tar)
+    response = requests.get(geckodriver_url)
+    with open(geckodriver_tar, 'wb') as f:
+        f.write(response.content)
 
     # Descomprimir el archivo tar.gz
     with tarfile.open(geckodriver_tar, 'r:gz') as tar_ref:
@@ -29,18 +54,17 @@ def download_and_install_geckodriver():
     # Eliminar el archivo tar.gz después de descomprimir
     os.remove(geckodriver_tar)
 
-    # Dar permisos de ejecución al geckodriver
-    os.chmod("geckodriver", 0o755)
-
 def ejecutar_codigo():
     try:
-        # Descargar e instalar geckodriver
+        # Descargar e instalar Firefox y geckodriver
+        download_and_install_firefox()
         download_and_install_geckodriver()
 
-        # Configurar Selenium con Firefox y especificar la ubicación del controlador
+        # Configurar Selenium con Firefox y especificar la ubicación del controlador y del binario de Firefox
         firefox_options = FirefoxOptions()
         firefox_options.headless = True  # Para ejecución sin interfaz gráfica
-        driver = webdriver.Firefox(service=FirefoxService(executable_path='./geckodriver'), options=firefox_options)
+        firefox_binary = './firefox/firefox/firefox'  # Ruta al binario de Firefox que hemos descargado
+        driver = webdriver.Firefox(service=FirefoxService(executable_path='./geckodriver', firefox_binary=firefox_binary), options=firefox_options)
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
         driver.get('https://guatemaladigital.com/')
