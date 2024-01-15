@@ -8,6 +8,7 @@ importlib-metadata==7.0.1
 lxml==5.1.0
 pandas==2.1.4
 parse==1.20.0
+geckodriver-autoinstaller==0.1.0
 pyppeteer==1.0.2
 python-telegram-bot==20.7
 requests==2.31.0
