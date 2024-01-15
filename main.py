@@ -1,8 +1,8 @@
 import os
 import tarfile
 import requests
-from bs4 import BeautifulSoup
 import asyncio
+import urllib.parse
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -16,47 +16,40 @@ async def send_Error(text, error):
     await bot.send_message(chat_id=chat_id, text="Hubo un error al obtener los productos: " + str(text) + ". " + str(error))
 
 def download_and_install_firefox():
-    # Obtener la última versión de Firefox
-    firefox_latest_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/"
-    response = requests.get(firefox_latest_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    firefox_version = soup.find('a', href=lambda x: x and x.startswith('firefox-')).get('href')
+    # URL directa de Firefox
+    firefox_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/firefox-99.0b8.tar.bz2"
 
-    # Construir la URL completa del archivo de instalación
-    firefox_download_url = f"{firefox_latest_url}{firefox_version}"
-    firefox_tar = f"{firefox_version}"
-    
     # Descargar Firefox
-    response = requests.get(firefox_download_url)
-    with open(firefox_tar, 'wb') as f:
+    response = requests.get(firefox_url)
+    with open("firefox.tar.bz2", 'wb') as f:
         f.write(response.content)
 
-    # Descomprimir el archivo tar
-    with tarfile.open(firefox_tar, 'r:gz') as tar_ref:
+    # Descomprimir el archivo tar.bz2
+    with tarfile.open("firefox.tar.bz2", 'r:bz2') as tar_ref:
         tar_ref.extractall('./firefox')
 
-    # Eliminar el archivo tar después de descomprimir
-    os.remove(firefox_tar)
+    # Eliminar el archivo tar.bz2 después de descomprimir
+    os.remove("firefox.tar.bz2")
 
 def download_and_install_geckodriver():
+    # URL directa de Geckodriver
     geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
-    geckodriver_tar = "geckodriver.tar.gz"
-    
-    # Descargar geckodriver
+
+    # Descargar Geckodriver
     response = requests.get(geckodriver_url)
-    with open(geckodriver_tar, 'wb') as f:
+    with open("geckodriver.tar.gz", 'wb') as f:
         f.write(response.content)
 
     # Descomprimir el archivo tar.gz
-    with tarfile.open(geckodriver_tar, 'r:gz') as tar_ref:
+    with tarfile.open("geckodriver.tar.gz", 'r:gz') as tar_ref:
         tar_ref.extractall()
 
     # Eliminar el archivo tar.gz después de descomprimir
-    os.remove(geckodriver_tar)
+    os.remove("geckodriver.tar.gz")
 
 def ejecutar_codigo():
     try:
-        # Descargar e instalar Firefox y geckodriver
+        # Descargar e instalar Firefox y Geckodriver
         download_and_install_firefox()
         download_and_install_geckodriver()
 
