@@ -18,8 +18,8 @@ async def send_Error(text, error):
 def ejecutar_codigo():
     try:
         # Configurar Selenium con Chrome
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Para ejecución sin interfaz gráfica
+        #chrome_options = Options()
+        # chrome_options.add_argument("--headless")  # Para ejecución sin interfaz gráfica
         # service = ChromeService(executable_path='path/to/chromedriver')  # Reemplaza con la ubicación de tu chromedriver
         # driver = webdriver.Chrome(service=service, options=chrome_options)
         driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
