@@ -1,9 +1,8 @@
 import os
-import zipfile
+import tarfile
 import urllib.request
 from bs4 import BeautifulSoup
 import asyncio
-import urllib.parse
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -18,17 +17,17 @@ async def send_Error(text, error):
 
 def download_and_install_geckodriver():
     geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
-    geckodriver_zip = "geckodriver.zip"
+    geckodriver_tar = "geckodriver.tar.gz"
     
     # Descargar geckodriver
-    urllib.request.urlretrieve(geckodriver_url, geckodriver_zip)
+    urllib.request.urlretrieve(geckodriver_url, geckodriver_tar)
 
-    # Descomprimir el archivo zip
-    with zipfile.ZipFile(geckodriver_zip, 'r') as zip_ref:
-        zip_ref.extractall()
+    # Descomprimir el archivo tar.gz
+    with tarfile.open(geckodriver_tar, 'r:gz') as tar_ref:
+        tar_ref.extractall()
 
-    # Eliminar el archivo zip después de descomprimir
-    os.remove(geckodriver_zip)
+    # Eliminar el archivo tar.gz después de descomprimir
+    os.remove(geckodriver_tar)
 
     # Dar permisos de ejecución al geckodriver
     os.chmod("geckodriver", 0o755)
