@@ -22,7 +22,7 @@ def ejecutar_codigo():
         chrome_options.add_argument("--headless")  # Para ejecución sin interfaz gráfica
         # service = ChromeService(executable_path='path/to/chromedriver')  # Reemplaza con la ubicación de tu chromedriver
         # driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
         driver.get('https://guatemaladigital.com/')
