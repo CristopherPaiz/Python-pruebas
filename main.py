@@ -2,11 +2,10 @@ from bs4 import BeautifulSoup
 import asyncio
 import urllib.parse
 from selenium import webdriver
-from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from telegram import Bot
-from webdriver_manager.chrome import ChromeDriverManager
+from geckodriver_autoinstaller import install
 
 TOKEN = '5558634309:AAGC9BY28ru907q3hmhWwdS83F31cIjHuiQ'
 chat_id = '815189312'
@@ -17,12 +16,13 @@ async def send_Error(text, error):
 
 def ejecutar_codigo():
     try:
-        # Configurar Selenium con Chrome
-        #chrome_options = Options()
-        # chrome_options.add_argument("--headless")  # Para ejecución sin interfaz gráfica
-        # service = ChromeService(executable_path='path/to/chromedriver')  # Reemplaza con la ubicación de tu chromedriver
-        # driver = webdriver.Chrome(service=service, options=chrome_options)
-        driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+        # Instalar y configurar automáticamente el controlador de Firefox
+        install()
+
+        # Configurar Selenium con Firefox
+        firefox_options = FirefoxOptions()
+        firefox_options.headless = True  # Para ejecución sin interfaz gráfica
+        driver = webdriver.Firefox(service=FirefoxService(), options=firefox_options)
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
         driver.get('https://guatemaladigital.com/')
