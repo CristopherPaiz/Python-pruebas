@@ -17,7 +17,7 @@ async def send_Error(text, error):
 
 def download_and_install_firefox():
     # Obtener la última versión de Firefox
-    firefox_latest_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/firefox-99.0b8.tar.bz2"
+    firefox_latest_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/"
     response = requests.get(firefox_latest_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     firefox_version = soup.find('a', href=lambda x: x and x.startswith('firefox-')).get('href')
