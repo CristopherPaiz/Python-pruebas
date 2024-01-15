@@ -1,3 +1,6 @@
+import os
+import zipfile
+import urllib.request
 from bs4 import BeautifulSoup
 import asyncio
 import urllib.parse
@@ -5,7 +8,6 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from telegram import Bot
-from geckodriver_autoinstaller import install
 
 TOKEN = '5558634309:AAGC9BY28ru907q3hmhWwdS83F31cIjHuiQ'
 chat_id = '815189312'
@@ -14,15 +16,32 @@ async def send_Error(text, error):
     bot = Bot(token=TOKEN)
     await bot.send_message(chat_id=chat_id, text="Hubo un error al obtener los productos: " + str(text) + ". " + str(error))
 
+def download_and_install_geckodriver():
+    geckodriver_url = "https://github.com/mozilla/geckodriver/releases/latest/download/geckodriver-linux64-v0.30.0.tar.gz"
+    geckodriver_zip = "geckodriver.zip"
+    
+    # Descargar geckodriver
+    urllib.request.urlretrieve(geckodriver_url, geckodriver_zip)
+
+    # Descomprimir el archivo zip
+    with zipfile.ZipFile(geckodriver_zip, 'r') as zip_ref:
+        zip_ref.extractall()
+
+    # Eliminar el archivo zip después de descomprimir
+    os.remove(geckodriver_zip)
+
+    # Dar permisos de ejecución al geckodriver
+    os.chmod("geckodriver", 0o755)
+
 def ejecutar_codigo():
     try:
-        # Instalar y configurar automáticamente el controlador de Firefox
-        install()
+        # Descargar e instalar geckodriver
+        download_and_install_geckodriver()
 
-        # Configurar Selenium con Firefox
+        # Configurar Selenium con Firefox y especificar la ubicación del controlador
         firefox_options = FirefoxOptions()
         firefox_options.headless = True  # Para ejecución sin interfaz gráfica
-        driver = webdriver.Firefox(service=FirefoxService(), options=firefox_options)
+        driver = webdriver.Firefox(service=FirefoxService(executable_path='./geckodriver'), options=firefox_options)
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
         driver.get('https://guatemaladigital.com/')
