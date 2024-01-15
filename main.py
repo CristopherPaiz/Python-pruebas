@@ -28,9 +28,12 @@ def download_and_install_firefox():
     block_size = 1024 * 1024  # 1 MB
     with tarfile.open("firefox.tar.bz2", 'r:bz2') as tar_ref:
         while True:
-            block = tar_ref.extractfile(tar_ref.next()).read(block_size)
-            if not block:
+            member = tar_ref.next()
+            if member is None:
                 break
+            if member.isreg():
+                block = tar_ref.extractfile(member).read(block_size)
+                # Aquí puedes procesar el bloque como lo necesites
 
     # Eliminar el archivo tar.bz2 después de descomprimir
     os.remove("firefox.tar.bz2")
@@ -48,9 +51,12 @@ def download_and_install_geckodriver():
     block_size = 1024 * 1024  # 1 MB
     with tarfile.open("geckodriver.tar.gz", 'r:gz') as tar_ref:
         while True:
-            block = tar_ref.extractfile(tar_ref.next()).read(block_size)
-            if not block:
+            member = tar_ref.next()
+            if member is None:
                 break
+            if member.isreg():
+                block = tar_ref.extractfile(member).read(block_size)
+                # Aquí puedes procesar el bloque como lo necesites
 
     # Eliminar el archivo tar.gz después de descomprimir
     os.remove("geckodriver.tar.gz")
