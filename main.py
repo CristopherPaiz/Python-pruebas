@@ -12,10 +12,12 @@ TOKEN = '5558634309:AAGC9BY28ru907q3hmhWwdS83F31cIjHuiQ'
 chat_id = '815189312'
 
 async def send_Error(text, error):
+    print("send_error")
     bot = Bot(token=TOKEN)
     await bot.send_message(chat_id=chat_id, text="Hubo un error al obtener los productos: " + str(text) + ". " + str(error))
 
 def download_and_install_firefox():
+    print("Ingresa a download_and_install_firefox")
     # URL directa de Firefox
     firefox_url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/99.0b8/linux-x86_64/en-US/firefox-99.0b8.tar.bz2"
 
@@ -32,6 +34,7 @@ def download_and_install_firefox():
             if member is None:
                 break
             if member.isreg():
+                print("descompresión firefox")
                 block = tar_ref.extractfile(member).read(block_size)
                 # Aquí puedes procesar el bloque como lo necesites
 
@@ -39,6 +42,7 @@ def download_and_install_firefox():
     os.remove("firefox.tar.bz2")
 
 def download_and_install_geckodriver():
+    print("ingresa a donwload_and_install_geckoDriver")
     # URL directa de Geckodriver
     geckodriver_url = "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz"
 
@@ -55,6 +59,7 @@ def download_and_install_geckodriver():
             if member is None:
                 break
             if member.isreg():
+                print("descomprime")
                 block = tar_ref.extractfile(member).read(block_size)
                 # Aquí puedes procesar el bloque como lo necesites
 
@@ -63,26 +68,39 @@ def download_and_install_geckodriver():
 
 def ejecutar_codigo():
     try:
+        print("Instalador 1")
         # Descargar e instalar Firefox y Geckodriver
         download_and_install_firefox()
+        print("Instalador 2")
         download_and_install_geckodriver()
+        print("paso los instaladores")
 
         # Configurar Selenium con Firefox y especificar la ubicación del controlador y del binario de Firefox
+        print("firefox 1")
         firefox_options = FirefoxOptions()
+        print("firefox 2")
         firefox_options.headless = True  # Para ejecución sin interfaz gráfica
+        print("firefox 3")
         firefox_binary = os.path.abspath('./firefox/firefox/firefox')  # Ruta absoluta al binario de Firefox que hemos descargado
+        print("firefox 4")
         geckodriver_binary = os.path.abspath('./geckodriver')  # Ruta absoluta al controlador de Geckodriver que hemos descargado
+        print("firefox 5")
         driver = webdriver.Firefox(service=FirefoxService(executable_path=geckodriver_binary, firefox_binary=firefox_binary), options=firefox_options)
+        print("ejecutó todo lo de firefox")
 
-        # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
+        # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarlo
         driver.get('https://guatemaladigital.com/')
+        print("entro a la pag")
         soup = BeautifulSoup(driver.page_source, 'html.parser')
+        print("pasó a html")
 
         # Buscar todos los bloques con la estructura especificada
         bloques = soup.find_all('div', class_='bloque--oferta marco--oferta--item mx-0')
+        print("encontró bloques")
 
         # Crear un conjunto para almacenar productos únicos
         productos_procesados = set()
+        print("encontró bloques")
 
         # Definimos la función que comunica a Telegram
         async def send_message(imagen, descripcion, precio_normal, precio_oferta, descuento, enlace):
