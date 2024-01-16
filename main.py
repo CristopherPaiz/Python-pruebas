@@ -70,8 +70,9 @@ def ejecutar_codigo():
         # Configurar Selenium con Firefox y especificar la ubicación del controlador y del binario de Firefox
         firefox_options = FirefoxOptions()
         firefox_options.headless = True  # Para ejecución sin interfaz gráfica
-        firefox_binary = './firefox/firefox/firefox'  # Ruta al binario de Firefox que hemos descargado
-        driver = webdriver.Firefox(service=FirefoxService(executable_path='./geckodriver', firefox_binary=firefox_binary), options=firefox_options)
+        firefox_binary = os.path.abspath('./firefox/firefox/firefox')  # Ruta absoluta al binario de Firefox que hemos descargado
+        geckodriver_binary = os.path.abspath('./geckodriver')  # Ruta absoluta al controlador de Geckodriver que hemos descargado
+        driver = webdriver.Firefox(service=FirefoxService(executable_path=geckodriver_binary, firefox_binary=firefox_binary), options=firefox_options)
 
         # Realizar una solicitud HTTP para obtener el contenido de la página y renderizarla
         driver.get('https://guatemaladigital.com/')
